@@ -1685,7 +1685,13 @@ def getControlFieldSpeech(  # noqa: C901
 	ariaCurrent=attrs.get('current', None)
 	placeholderValue=attrs.get('placeholder', None)
 	value=attrs.get('value',"")
-	if reason == OutputReason.FOCUS or attrs.get('alwaysReportDescription', False):
+	if (
+		attrs.get('alwaysReportDescription', False)
+		or reason in (
+			OutputReason.REASON_FOCUS,
+			OutputReason.REASON_CARET,
+		)
+	):
 		description=attrs.get('description',"")
 	else:
 		description=""
@@ -1915,6 +1921,8 @@ def getControlFieldSpeech(  # noqa: C901
 		out = []
 		if ariaCurrent:
 			out.extend(ariaCurrentSequence)
+		if descriptionSequence:
+			out.extend(descriptionSequence)
 		# Speak expanded / collapsed / level for treeview items (in ARIA treegrids)
 		if role == controlTypes.ROLE_TREEVIEWITEM:
 			if controlTypes.STATE_EXPANDED in states:
